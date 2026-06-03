@@ -303,7 +303,7 @@ function Hero() {
         <div className="flex-1 text-center lg:text-left">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-700/50 bg-purple-900/20 text-purple-300 text-sm font-medium mb-6 fade-in-up">
             <span className="w-2 h-2 rounded-full bg-green-400 inline-block pulse-glow" />
-            Aivailable for work
+            Available for work
           </div>
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-4 fade-in-up">
