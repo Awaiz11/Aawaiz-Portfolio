@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import emailjs from "@emailjs/browser";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 const MenuIcon = () => (
@@ -160,10 +161,10 @@ function Navbar() {
         {/* Logo */}
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-purple-700/40">
-            A
+            Ai
           </div>
           <span className="text-white font-bold text-lg tracking-tight">
-            <span className="gradient-text">Aawaiz</span>
+            <span className="gradient-text">Aawaiz Ijaz</span>
           </span>
         </div>
 
@@ -217,11 +218,13 @@ function Navbar() {
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 function Hero() {
   const [text, setText] = useState("");
+  const [emailCopied, setEmailCopied] = useState(false);
   const [_idx, setIdx] = useState(0);
   const phrases = ["Frontend Developer", "UI/UX Designer", "Creative Coder", "React Developer"];
   const phraseRef = useRef(0);
   const charRef = useRef(0);
   const deletingRef = useRef(false);
+  const emailCopyTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     const type = () => {
@@ -254,6 +257,38 @@ function Hero() {
     return () => clearTimeout(timeout);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (emailCopyTimeoutRef.current) {
+        window.clearTimeout(emailCopyTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText("awaiztabassam3@gmail.com");
+      setEmailCopied(true);
+      if (emailCopyTimeoutRef.current) {
+        window.clearTimeout(emailCopyTimeoutRef.current);
+      }
+      emailCopyTimeoutRef.current = window.setTimeout(() => {
+        setEmailCopied(false);
+        emailCopyTimeoutRef.current = null;
+      }, 2000);
+    } catch (error) {
+      console.error("Failed to copy email to clipboard:", error);
+      setEmailCopied(true);
+      if (emailCopyTimeoutRef.current) {
+        window.clearTimeout(emailCopyTimeoutRef.current);
+      }
+      emailCopyTimeoutRef.current = window.setTimeout(() => {
+        setEmailCopied(false);
+        emailCopyTimeoutRef.current = null;
+      }, 2000);
+    }
+  };
+
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden dot-grid">
       {/* Background blobs */}
@@ -268,7 +303,7 @@ function Hero() {
         <div className="flex-1 text-center lg:text-left">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-purple-700/50 bg-purple-900/20 text-purple-300 text-sm font-medium mb-6 fade-in-up">
             <span className="w-2 h-2 rounded-full bg-green-400 inline-block pulse-glow" />
-            Available for work
+            Aivailable for work
           </div>
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-4 fade-in-up">
@@ -303,21 +338,29 @@ function Hero() {
           </div>
 
           {/* Social */}
-          <div className="flex gap-4 mt-10 justify-center lg:justify-start">
-            {[
-              { icon: <GithubIcon />, href: "#", label: "GitHub" },
-              { icon: <LinkedinIcon />, href: "#", label: "LinkedIn" },
-              { icon: <EmailIcon />, href: "mailto:aawaiz@example.com", label: "Email" },
-            ].map(({ icon, href, label }) => (
-              <a
-                key={label}
-                href={href}
-                aria-label={label}
-                className="w-11 h-11 rounded-full border border-slate-700 bg-slate-900/50 text-slate-400 hover:text-white hover:border-purple-500 hover:bg-purple-900/30 flex items-center justify-center transition-all duration-300 hover:scale-110"
-              >
-                {icon}
-              </a>
-            ))}
+          <div className="flex flex-col gap-2 mt-10 justify-center lg:justify-start">
+            <div className="flex gap-4">
+              {[
+                { icon: <GithubIcon />, href: "https://github.com/Awaiz11", label: "GitHub" },
+                { icon: <LinkedinIcon />, href: "#", label: "LinkedIn" },
+                { icon: <EmailIcon />, href: "#", label: "Email", onClick: handleCopyEmail },
+              ].map(({ icon, href, label, onClick }) => (
+                <a
+                  key={label}
+                  href={href}
+                  onClick={label === "Email" ? (event) => { event.preventDefault(); onClick?.(); } : undefined}
+                  target={label === "GitHub" ? "_blank" : undefined}
+                  rel={label === "GitHub" ? "noreferrer noopener" : undefined}
+                  Airia-label={label}
+                  className="w-11 h-11 rounded-full border border-slate-700 bg-slate-900/50 text-slate-400 hover:text-white hover:border-purple-500 hover:bg-purple-900/30 flex items-center justify-center transition-all duration-300 hover:scale-110"
+                >
+                  {icon}
+                </a>
+              ))}
+            </div>
+            {emailCopied && (
+              <p className="text-sm text-green-400 font-medium">Email Copied!</p>
+            )}
           </div>
         </div>
 
@@ -332,8 +375,8 @@ function Hero() {
             {/* Image */}
             <div className="absolute inset-6 rounded-full overflow-hidden gradient-border pulse-glow">
               <img
-                src="/images/profile.jpg"
-                alt="Muhammad Aawaiz"
+                src="/images/portfolio.jpeg"
+                Ailt="Muhammad Aawaiz"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -359,7 +402,7 @@ function Hero() {
 // ─── About ────────────────────────────────────────────────────────────────────
 function About() {
   const stats = [
-    { value: "2+", label: "Years Experience" },
+    { value: "1+", label: "Years Experience" },
     { value: "20+", label: "Projects Done" },
     { value: "8+", label: "Happy Clients" },
     { value: "100%", label: "Dedication" },
@@ -384,7 +427,7 @@ function About() {
               <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden gradient-border">
                 <img
                   src="https://images.pexels.com/photos/34212896/pexels-photo-34212896.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200"
-                  alt="Workspace"
+                  Ailt="Workspace"
                   className="w-full h-full object-cover opacity-70"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent" />
@@ -410,7 +453,7 @@ function About() {
           {/* Right */}
           <div>
             <h3 className="text-3xl font-bold text-white mb-4">
-              A passionate <span className="gradient-text">Frontend Developer</span> & Designer
+              Ai passionate <span className="gradient-text">Frontend Developer</span> & Designer
             </h3>
             <p className="text-slate-400 leading-relaxed mb-4 text-base">
               Hello! I'm <strong className="text-white">Muhammad Aawaiz</strong>, a creative frontend developer and UI/UX designer who loves turning complex ideas into beautiful, intuitive digital experiences.
@@ -558,7 +601,7 @@ function Projects() {
           </h2>
           <div className="w-20 h-1 bg-gradient-to-r from-purple-500 to-blue-500 mx-auto mt-4 rounded-full" />
           <p className="text-slate-400 max-w-xl mx-auto mt-4 text-base">
-            A showcase of my best projects — from web development to design work.
+            Ai showcase of my best projects — from web development to design work.
           </p>
         </div>
 
@@ -618,24 +661,47 @@ function Projects() {
 
 // ─── Contact ──────────────────────────────────────────────────────────────────
 function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [form, setForm] = useState({ from_name: "", from_email: "", subject: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
-    setForm({ name: "", email: "", subject: "", message: "" });
+    if (!formRef.current) return;
+
+    setLoading(true);
+
+    emailjs
+      .sendForm(
+        "service_35oxd5k",
+        "template_ic6nn6k",
+        formRef.current,
+        "4qCYzOhEPhWBKBV7C"
+      )
+      .then(() => {
+        alert("Message sent! I'll get back to you soon.");
+        setSent(true);
+        setForm({ from_name: "", from_email: "", subject: "", message: "" });
+      })
+      .catch((error) => {
+        console.error("EmailJS error:", error);
+        alert("Unable to send message. Please try again later.");
+      })
+      .finally(() => {
+        setLoading(false);
+        setTimeout(() => setSent(false), 4000);
+      });
   };
 
   const contactInfo = [
-    { icon: <EmailIcon />, label: "Email", value: "aawaiz@example.com", color: "from-purple-600 to-violet-600" },
-    { icon: <PhoneIcon />, label: "Phone", value: "+92 300 0000000", color: "from-blue-600 to-cyan-500" },
-    { icon: <LocationIcon />, label: "Location", value: "Pakistan 🇵🇰", color: "from-pink-600 to-rose-500" },
+    { icon: <EmailIcon />, label: "Email", value: "awaiztabassam3@gmail.com", color: "from-purple-600 to-violet-600" },
+    { icon: <PhoneIcon />, label: "Phone", value: "+92 312 4915599", color: "from-blue-600 to-cyan-500" },
+    { icon: <LocationIcon />, label: "Location", value: "Lahore 🇵🇰", color: "from-pink-600 to-rose-500" },
   ];
 
   return (
@@ -676,12 +742,14 @@ function Contact() {
               <p className="text-slate-400 text-sm font-semibold mb-4">Follow Me On</p>
               <div className="flex gap-3">
                 {[
-                  { icon: <GithubIcon />, label: "GitHub", href: "#" },
+                  { icon: <GithubIcon />, label: "GitHub", href: "https://github.com/Awaiz11" },
                   { icon: <LinkedinIcon />, label: "LinkedIn", href: "#" },
                 ].map(({ icon, label, href }) => (
                   <a
                     key={label}
                     href={href}
+                    target={label === "GitHub" ? "_blank" : undefined}
+                    rel={label === "GitHub" ? "noreferrer noopener" : undefined}
                     className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border border-slate-700 text-slate-400 hover:text-white hover:border-purple-500 hover:bg-purple-900/20 transition-all duration-300 text-sm font-semibold"
                   >
                     {icon} {label}
@@ -692,7 +760,7 @@ function Contact() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="lg:col-span-3 p-8 rounded-2xl border border-slate-800 bg-slate-900/50">
+          <form ref={formRef} onSubmit={sendEmail} className="lg:col-span-3 p-8 rounded-2xl border border-slate-800 bg-slate-900/50">
             {sent && (
               <div className="mb-6 p-4 rounded-xl bg-green-900/30 border border-green-700/50 text-green-400 text-sm font-semibold flex items-center gap-2">
                 ✅ Message sent! I'll get back to you soon.
@@ -701,8 +769,8 @@ function Contact() {
 
             <div className="grid sm:grid-cols-2 gap-5 mb-5">
               {[
-                { name: "name", label: "Your Name", placeholder: "Muhammad Aawaiz", type: "text" },
-                { name: "email", label: "Email Address", placeholder: "aawaiz@email.com", type: "email" },
+                { name: "from_name", label: "Your Name", placeholder: "Muhammad Aawaiz", type: "text" },
+                { name: "from_email", label: "Email Address", placeholder: "aawaiz@email.com", type: "email" },
               ].map(({ name, label, placeholder, type }) => (
                 <div key={name}>
                   <label className="block text-slate-400 text-sm font-semibold mb-2">{label}</label>
@@ -750,7 +818,7 @@ function Contact() {
               className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 via-violet-600 to-blue-600 text-white font-bold flex items-center justify-center gap-2 hover:shadow-2xl hover:shadow-purple-700/40 transition-all duration-300 hover:scale-[1.02]"
             >
               <SendIcon />
-              Send Message
+              {loading ? "Sending..." : "Send Message"}
             </button>
           </form>
         </div>
@@ -766,7 +834,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-center gap-2 mb-4">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center text-white font-bold">
-            A
+            Ai
           </div>
           <span className="gradient-text font-bold text-lg">Muhammad Aawaiz</span>
         </div>
